@@ -1,0 +1,95 @@
+# Micro.blog Development Tasks
+
+# Load environment variables from .env file
+set dotenv-load
+
+# Default recipe (list available recipes)
+default:
+    @just --list
+
+# Build the Hugo site
+build:
+    hugo
+
+# Run Hugo development server
+serve:
+    hugo server --disableFastRender --noHTTPCache
+
+# Syndication
+# ===========
+
+# Install syndication dependencies
+syndicate-install:
+    pip3 install -r syndicate/requirements.txt
+
+# Run syndication dispatcher (auto-posts to dev.to with canonical URL)
+syndicate *ARGS:
+    cd syndicate && python3 syndicate.py {{ARGS}}
+
+# Dry-run: see what would happen without posting
+syndicate-dry:
+    cd syndicate && python3 syndicate.py --dry-run
+
+# Authenticate to Micro.blog via email
+auth:
+    python3 .github/deploy/microblog_auth.py
+
+# Deploy theme changes to Micro.blog
+deploy:
+    python3 .github/deploy/microblog_deploy.py --all
+
+# Backup content from Micro.blog
+backup:
+    python3 .github/deploy/microblog_backup.py --all
+
+# Backup and download only (no extraction)
+backup-download:
+    python3 .github/deploy/microblog_backup.py --export-only
+
+# Extract content from existing backup ZIP
+backup-extract ZIP_FILE:
+    python3 .github/deploy/microblog_backup.py --extract-only {{ZIP_FILE}}
+
+# Download the latest content export ZIP from the most recent GitHub release
+release-download:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p backups
+    echo "Fetching latest release from doughatcher/dotcom..."
+    gh release download --repo doughatcher/dotcom --pattern "*.zip" --dir backups --clobber
+    echo "Downloaded to backups/:"
+    ls -lh backups/*.zip | tail -5
+
+# Validate session cookie
+validate:
+    python3 .github/deploy/microblog_deploy.py --validate-only
+
+# Configure git identity from .env file
+git-config:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -f .env ]; then
+        source .env
+        if [ -n "${GIT_USER_NAME:-}" ] && [ -n "${GIT_USER_EMAIL:-}" ]; then
+            git config user.name "$GIT_USER_NAME"
+            git config user.email "$GIT_USER_EMAIL"
+            echo "✅ Git identity configured:"
+            echo "   Name:  $(git config user.name)"
+            echo "   Email: $(git config user.email)"
+        else
+            echo "❌ GIT_USER_NAME and GIT_USER_EMAIL must be set in .env file"
+            exit 1
+        fi
+    else
+        echo "❌ .env file not found"
+        exit 1
+    fi
+
+# Install Python dependencies
+install: git-config
+    pip3 install --user --break-system-packages requests python-dotenv
+    @echo "Installation complete."
+
+# Show available commands
+help:
+    just --list

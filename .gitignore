@@ -1,0 +1,39 @@
+# Hugo
+.hugo_build.lock
+public/
+resources/
+
+# OS
+.DS_Store
+
+# Secrets — NEVER COMMIT
+.env
+.env.*
+!.env.example
+.session-cookie
+*.pem
+*.key
+
+# Content managed by Micro.blog, not git (except /blog/ pillars which ARE in git)
+content/*
+!content/blog/
+!content/blog/**
+!content/consulting.md
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.pytest_cache/
+
+# Backups
+backups/
+
+# Editor
+.vscode/
+.idea/
