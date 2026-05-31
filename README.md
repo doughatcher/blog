@@ -1,4 +1,4 @@
-# executive-blog — doughatcher.com content + overrides
+# blog — doughatcher.com content + overrides
 
 Private repo. Holds the C-level pillar essays, doughatcher-specific Hugo layout overrides (consulting page, publications page), site branding (doug.png, custom.css), and the **editorial-loop authoring workflow** that drafts and ships pillars.
 
@@ -33,7 +33,7 @@ config.json          — doughatcher.com site config (title, baseURL, menu).
 ## What's NOT here
 
 - **Theme layouts/static** — those live in [`doughatcher/dougie-theme`](https://github.com/doughatcher/dougie-theme). Install that plugin in the micro.blog UI for doughatcher.com.
-- **Workers** (social-bridge, link-preview-service, slack-bot) — those stay in `doughatcher/dotcom` for now (they serve all three sites, not just doughatcher; not really "executive blog" concerns).
+- **Workers** (social-bridge, link-preview-service, slack-bot) — those stay in `doughatcher/dotcom` for now (they serve all three sites, not just doughatcher; not really blog concerns). Slack-bot's `BLOG_REPO` var still points here so vibe-edits land in this repo's PRs.
 
 ## Editorial-loop workflow
 
@@ -48,4 +48,4 @@ Same as it always was — pillars get drafted as PRs against this repo, reviewed
 
 ## Migration status
 
-Created 2026-05-30 as part of the dougie-theme extraction. Live cutover from `doughatcher/dotcom` happens AFTER superterran.net and leaning.blue test the plugin model successfully.
+Created 2026-05-30 as part of the dougie-theme extraction. Renamed from `executive-blog` to `blog` shortly after. Live cutover from `doughatcher/dotcom` happens once Doug points doughatcher.com's micro.blog theme at this repo (theme id 102559) instead of dotcom (theme id 102558).

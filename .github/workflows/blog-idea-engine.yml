@@ -19,7 +19,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Checkout doughatcher
+      - name: Checkout blog repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -54,7 +54,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           VAULT_PATH: ${{ github.workspace }}/vault
           BLOG_PATH: ${{ github.workspace }}/content/blog
-          DOTCOM_PATH: ${{ github.workspace }}
+          BLOG_REPO_PATH: ${{ github.workspace }}
           INJECT_CONTEXT: ${{ inputs.inject_context }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node index.js
@@ -65,4 +65,4 @@ jobs:
           echo "## Blog Idea Engine" >> $GITHUB_STEP_SUMMARY
           echo "Run at: $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Check open Draft PRs → [doughatcher/dotcom pulls](https://github.com/doughatcher/dotcom/pulls)" >> $GITHUB_STEP_SUMMARY
+          echo "Check open Draft PRs → [doughatcher/blog pulls](https://github.com/doughatcher/blog/pulls)" >> $GITHUB_STEP_SUMMARY
