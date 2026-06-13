@@ -37,7 +37,15 @@ config.json          — doughatcher.com site config (title, baseURL, menu).
 
 ## Editorial-loop workflow
 
-Same as it always was — pillars get drafted as PRs against this repo, reviewed, merged. The blog-publish workflow fires the LinkedIn cross-post via micro.blog Micropub on merge. Nothing about that workflow needs to change with this restructure; the workflow files moved with the content into this repo and continue to operate the same way.
+Same as it always was — pillars get drafted as PRs against this repo, reviewed, merged. On merge, the blog-publish workflow publishes the post to doughatcher.com via micro.blog Micropub.
+
+## Syndication policy (LinkedIn is opt-in)
+
+**Nothing auto-syndicates to LinkedIn.** This is deliberate.
+
+- **Auto on merge** (`blog-publish.yml`): publishes to doughatcher.com and cross-posts only to the destinations in the `MICROBLOG_SYNDICATE_TO` repo variable (currently `threads`). LinkedIn is **not** in that list.
+- **No `mp-syndicate-to` = suppressed, not defaulted.** `apps/editorial-loop/lib/microblog-poster.js` always sends an explicit empty `mp-syndicate-to[]=` when no targets are configured, so micro.blog's account-level cross-posting (incl. LinkedIn) never fires implicitly. Posts made directly in the micro.blog **web editor** bypass this code — LinkedIn auto-cross-post is also turned **off at the account level** as the backstop.
+- **The lever** — to put a *specific* post on LinkedIn: add the **`syndicate-linkedin`** label to its (merged) PR. `syndicate-on-label.yml` then cross-posts that one post to LinkedIn explicitly. This is the only path to LinkedIn; use it intentionally.
 
 ## How doughatcher.com renders
 
