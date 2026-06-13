@@ -78,16 +78,27 @@ export async function postToMicroblog(text) {
   if (process.env.MICROBLOG_DESTINATION_UID) {
     params.append('mp-destination', process.env.MICROBLOG_DESTINATION_UID);
   }
-  // micro.blog requires per-post opt-in for syndication — it does NOT honor
-  // the account-level cross-post default for API-posted entries. Pass each
-  // destination UID as a separate mp-syndicate-to[] form field.
-  // Discover UIDs at GET /micropub?q=syndicate-to (e.g. "linkedin", "mastodon").
+  // Syndication is opt-in per post. Pass each destination UID as a separate
+  // mp-syndicate-to[] form field. Discover UIDs at GET /micropub?q=syndicate-to
+  // (e.g. "linkedin", "mastodon", "threads").
+  //
+  // IMPORTANT: when no targets are configured, send an EXPLICIT empty
+  // mp-syndicate-to[]= to SUPPRESS micro.blog's account-level cross-posting
+  // (notably LinkedIn). micro.blog falls back to the account default when the
+  // field is omitted entirely, so omission is NOT the same as suppression. This
+  // mirrors the social-bridge NEVER_SYNDICATE pattern. LinkedIn is intentional /
+  // on-demand only — via the `syndicate-linkedin` PR label
+  // (.github/workflows/syndicate-on-label.yml), never automatic.
   const syndicateTo = (process.env.MICROBLOG_SYNDICATE_TO || '')
     .split(',')
     .map(s => s.trim())
     .filter(Boolean);
-  for (const uid of syndicateTo) {
-    params.append('mp-syndicate-to[]', uid);
+  if (syndicateTo.length === 0) {
+    params.append('mp-syndicate-to[]', '');
+  } else {
+    for (const uid of syndicateTo) {
+      params.append('mp-syndicate-to[]', uid);
+    }
   }
 
   const res = await fetch('https://micro.blog/micropub', {

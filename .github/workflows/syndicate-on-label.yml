@@ -70,7 +70,11 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MICROBLOG_APP_TOKEN: ${{ secrets.MICROBLOG_APP_TOKEN }}
           MICROBLOG_DESTINATION_UID: ${{ vars.MICROBLOG_DESTINATION_UID }}
-          MICROBLOG_SYNDICATE_TO: ${{ vars.MICROBLOG_SYNDICATE_TO || 'linkedin' }}
+          # The `syndicate-linkedin` label IS the LinkedIn lever: always target
+          # LinkedIn explicitly here, independent of the general
+          # MICROBLOG_SYNDICATE_TO var (which intentionally excludes LinkedIn so
+          # nothing auto-syndicates there). Don't reintroduce a `vars.* ||` fallback.
+          MICROBLOG_SYNDICATE_TO: linkedin
           POST_PATH: ${{ steps.post.outputs.path }}
           BASE_URL: https://doughatcher.com
         run: node apps/editorial-loop/publish.js
